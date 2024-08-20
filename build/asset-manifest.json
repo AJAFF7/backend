@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.0b741519.css",
+    "main.js": "/static/js/main.28d8a34d.js",
+    "static/js/453.5cb5e459.chunk.js": "/static/js/453.5cb5e459.chunk.js",
+    "static/media/ubuntu1.png": "/static/media/ubuntu1.53922a68fb89e4c33942.png",
+    "index.html": "/index.html",
+    "main.0b741519.css.map": "/static/css/main.0b741519.css.map",
+    "main.28d8a34d.js.map": "/static/js/main.28d8a34d.js.map",
+    "453.5cb5e459.chunk.js.map": "/static/js/453.5cb5e459.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0b741519.css",
+    "static/js/main.28d8a34d.js"
+  ]
+}
