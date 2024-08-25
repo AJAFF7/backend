@@ -16,17 +16,29 @@ let backupDone = false;
 app.post('/backup', (req, res) => {
   const { sourcePath, destinationPath } = req.body;
 
-  if (!fs.existsSync(sourcePath)) {
-    return res.status(400).json({ error: `Source directory ${sourcePath} does not exist` });
+  if (!sourcePath || !destinationPath) {
+    return res.status(400).json({ error: 'Source and destination paths are required' });
   }
 
-  if (!fs.existsSync(destinationPath)) {
-    return res.status(400).json({ error: `Destination directory ${destinationPath} does not exist` });
+  // Resolve and validate paths
+  const resolvedSourcePath = path.resolve(sourcePath);
+  const resolvedDestinationPath = path.resolve(destinationPath);
+
+  // Check if sourcePath is a valid directory on the server
+  if (!fs.existsSync(resolvedSourcePath) || !fs.statSync(resolvedSourcePath).isDirectory()) {
+    return res.status(400).json({ error: `Source directory ${resolvedSourcePath} does not exist or is not a directory` });
+  }
+
+  // Check if destinationPath exists, create if necessary
+  if (!fs.existsSync(resolvedDestinationPath)) {
+    fs.mkdirSync(resolvedDestinationPath, { recursive: true });
+  } else if (!fs.statSync(resolvedDestinationPath).isDirectory()) {
+    return res.status(400).json({ error: `Destination path ${resolvedDestinationPath} is not a directory` });
   }
 
   const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, '');
-  const backupFile = path.join(destinationPath, `backup-${timestamp}.tar.gz`);
-  const backupCommand = `tar -czf ${backupFile} -C ${sourcePath} .`;
+  const backupFile = path.join(resolvedDestinationPath, `backup-${timestamp}.tar.gz`);
+  const backupCommand = `tar -czf ${backupFile} -C ${resolvedSourcePath} .`;
 
   exec(backupCommand, (error, stdout, stderr) => {
     if (error) {
@@ -71,3 +83,4 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
